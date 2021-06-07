@@ -7,34 +7,29 @@
   justify-content: center;
 }
 
-.card1 {
-  background-color: var(--special);
-  height: 45%;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 1em;
-}
+.card1,
 .card2 {
   background-color: white;
-  height: 45%;
+  height: 50%;
   justify-content: center;
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: 1em;
+  max-width: 500px;
+}
+
+.card1 {
+  background-color: var(--special);
 }
 
 .inputContainer {
   display: flex;
   align-items: center;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 1rem;
 }
 
 .inputContainer > input {
-  margin-top: 0.5rem;
   border: none;
   border-bottom: 2px solid var(--special);
 }
@@ -46,14 +41,39 @@ input::placeholder {
   align-self: center;
 }
 .card2 > p {
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
+  margin-top: 1rem;
+  font-size: 0.6rem;
   justify-content: center;
   align-self: center;
 }
 
-@media (min-width: 900px) {
+.card2 > form {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.loginBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1em;
+}
+
+.loginBtn > button {
+  background-color: var(--special);
+  border-radius: 50px;
+  border: none;
+  width: 60%;
+  font-size: 0.75rem;
+  padding: 0.25em;
+}
+
+@media (min-width: 768px) {
   .login {
     flex-direction: row;
+  }
+  .card1,
+  .card2 {
+    height: 60%;
   }
 }

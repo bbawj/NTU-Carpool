@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import "./Login.css"
 
-function Login() {
+function Signup() {
     return (
         <div className="login">
             <div className="card1">
@@ -10,7 +10,7 @@ function Login() {
                 <h2>Never be late again.</h2>
             </div>
             <div className="card2">
-                <h1>Login</h1>
+                <h1>Sign Up</h1>
                 <form action="">
                 <div className="inputContainer">
                     <span class="material-icons-outlined">person_outline</span>
@@ -22,13 +22,13 @@ function Login() {
                     <input placeholder="Password" type="text" />
                 </div>
                 <div className="loginBtn">
-                <button>Login</button>
+                <button>Register</button>
                 </div>
                 </form>
-                <p>Don't have an account? <Link to="/signup">Signup.</Link></p>
+                <p>Already have an account? <Link to="/">Login.</Link></p>
             </div>
         </div>
     )
 }
 
-export default Login
+export default Signup
