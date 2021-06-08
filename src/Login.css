@@ -16,7 +16,7 @@
   flex-direction: column;
   width: 100%;
   padding: 1em;
-  max-width: 500px;
+  /* max-width: 500px; */
 }
 
 .card1 {
@@ -75,5 +75,6 @@ input::placeholder {
   .card1,
   .card2 {
     height: 60%;
+    width: 40%;
   }
 }

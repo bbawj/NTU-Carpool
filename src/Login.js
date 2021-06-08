@@ -11,7 +11,7 @@ function Login() {
             </div>
             <div className="card2">
                 <h1>Login</h1>
-                <form action="">
+                <form action="/login" method="POST">
                 <div className="inputContainer">
                     <span class="material-icons-outlined">person_outline</span>
                     <input placeholder="Username" type="text" />
@@ -22,7 +22,7 @@ function Login() {
                     <input placeholder="Password" type="text" />
                 </div>
                 <div className="loginBtn">
-                <button>Login</button>
+                <button type="submit">Login</button>
                 </div>
                 </form>
                 <p>Don't have an account? <Link to="/signup">Signup.</Link></p>
