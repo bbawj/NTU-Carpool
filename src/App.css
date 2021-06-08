@@ -5,8 +5,10 @@
 
 :root {
   --special: #71c9ce;
+  --bg: #e3fdfd;
 }
 
 .app {
   height: 100vh;
+  background-color: var(--bg);
 }

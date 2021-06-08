@@ -68,6 +68,12 @@ input::placeholder {
   padding: 0.25em;
 }
 
+.errorMessage {
+  color: red;
+  align-self: center;
+  margin-top: 0.5em;
+}
+
 @media (min-width: 768px) {
   .login {
     flex-direction: row;
