@@ -24,6 +24,6 @@ const verifyToken = require('./middleware/verifyToken');
 
 app.get("/api/data", verifyToken, (req, res) => {
     res.send(req.user._id)
-} )
+} );
 
 app.listen(port, () => console.log( `Server running on port ${port}`));
