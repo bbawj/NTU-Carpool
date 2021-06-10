@@ -8,6 +8,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./PrivateRoute";
+import { AppProvider } from "./contexts/AppContext";
 
 const THEME = createMuiTheme({
   typography: {
@@ -30,8 +31,9 @@ function App() {
               <Route exact path="/" component={Login} />
               <Route path="/login" component={Login} />
               <Route path="/signup" component={Signup} />
-
-              <PrivateRoute path="/ride" component={Home} />
+              <AppProvider>
+                <PrivateRoute path="/ride" component={Home} />
+              </AppProvider>
             </Switch>
           </AuthProvider>
         </Router>

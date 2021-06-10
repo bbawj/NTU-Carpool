@@ -10,11 +10,11 @@ const rideSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    pickupTime: {
-      type: Date,
+    dropoff: {
+      type: String,
       required: true,
     },
-    dropoffTime: {
+    pickupTime: {
       type: Date,
       required: true,
     },

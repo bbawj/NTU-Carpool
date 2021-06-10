@@ -1,26 +1,30 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const Ride = require("../models/Ride");
-const Joi = require("joi");
+const Joi = require("joi").extend(require("@joi/date"));
 //jwt middleware
 const verifyToken = require("../middleware/verifyToken");
 
 //validate with joi
 const schema = Joi.object({
+  userid: Joi.string(),
   pickup: Joi.string(),
   dropoff: Joi.string(),
-  pickupTime: Joi.date().required(),
-  dropoffTime: Joi.date().greater(Joi.ref("pickup")).required(),
+  pickupTime: Joi.date().min("now").format("YYYY-MM-DD HH:mm").required(),
   seats: Joi.number().min(1).max(6).required(),
   price: Joi.number().min(0).required(),
 });
 
 router.get("/", verifyToken, (req, res) => {
   const now = new Date().toISOString();
-  const query = Ride.find({}).where("pickupTime").gt(now);
+  const { pickup, dropoff } = req.query;
+  let params = {};
+  if (pickup) params.pickup = pickup;
+  if (dropoff) params.dropoff = dropoff;
+  const query = Ride.find(params).where("pickupTime").gt(now);
   query.exec((err, data) => {
-    if (err) return res.send(err);
-    res.send(data);
+    if (err) return res.status(500).json({ error: err.code });
+    res.json(data);
   });
 });
 
@@ -29,7 +33,8 @@ router.post("/add", verifyToken, async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   //get username from DB
-  const username = await User.findById(req.user._id).username;
+  const query = await User.findById(req.body.userid);
+  const username = query.username;
   if (!username) return res.status(400).send("User not found");
 
   const ride = new Ride({
@@ -37,12 +42,12 @@ router.post("/add", verifyToken, async (req, res) => {
     pickup: req.body.pickup,
     dropoff: req.body.dropoff,
     pickupTime: req.body.pickupTime,
-    dropoffTime: req.body.dropoffTime,
     seats: req.body.seats,
     price: req.body.price,
   });
   try {
-    await ride.save();
+    const newRide = await ride.save();
+    res.send({ id: newRide._id });
   } catch (err) {
     res.status(400).send(err);
   }

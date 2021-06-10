@@ -8,15 +8,16 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { InputAdornment, MenuItem } from "@material-ui/core";
 import axios from "./axios";
+import { useAuth } from "./contexts/AuthContext";
 
 function CreateForm({ pickup, dropoff }) {
   const [open, setOpen] = useState(false);
   const [pickupTime, setPickupTime] = useState("");
-  const [dropoffTime, setDropoffTime] = useState("");
   const [date, setDate] = useState("");
   const [seats, setSeats] = useState(1);
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState(0);
   const [error, setError] = useState("");
+  const { currentUser } = useAuth();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -25,32 +26,48 @@ function CreateForm({ pickup, dropoff }) {
   const handleClose = () => {
     setOpen(false);
     setPickupTime("");
-    setDropoffTime("");
     setDate("");
-    setSeats(0);
+    setSeats(1);
+    setPrice(0);
     setError("");
   };
   // create new ride post req
-  function handleSubmit() {
-    if (pickupTime > dropoffTime)
-      return setError("Pickup cannot be later than dropoff");
-    if (date < new Date().toISOString().slice(0, 10))
-      return setError("Date is invalid");
-    if (!seats) return setError("Must have available seats");
-
-    axios.post("/ride/add", {
-      pickup: pickup,
-      dropoff: dropoff,
-      pickupTime: `${date} ${pickupTime}`,
-      dropoffTime: `${date} ${dropoffTime}`,
-      seats: seats,
-      price: price,
-    });
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      await axios.post(
+        "/ride/add",
+        {
+          userid: currentUser,
+          pickup: pickup,
+          dropoff: dropoff,
+          pickupTime: `${date} ${pickupTime}`,
+          seats: seats,
+          price: price,
+        },
+        { headers: { authorization: localStorage.getItem("token") } }
+      );
+      handleClose();
+    } catch (err) {
+      console.log(err);
+      if (
+        err.response.data ===
+        '"pickupTime" must be greater than or equal to "now"'
+      ) {
+        setError("Date or time is invalid");
+      } else if (err.response.data === '"price" must be a number') {
+        setError("Price cannot be empty");
+      }
+    }
   }
 
   return (
     <div>
-      <button className="searchBtn" onClick={handleClickOpen}>
+      <button
+        disabled={!(pickup && dropoff)}
+        className="searchBtn"
+        onClick={handleClickOpen}
+      >
         CREATE<span class="material-icons-outlined">add</span>
       </button>
       <Dialog
@@ -81,17 +98,6 @@ function CreateForm({ pickup, dropoff }) {
               required={true}
               onChange={(e) => setPickupTime(e.target.value)}
               label="Pickup Time"
-              type="time"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <TextField
-              style={{ marginLeft: "1em" }}
-              id="droptime"
-              required
-              onChange={(e) => setDropoffTime(e.target.value)}
-              label="Dropoff Time"
               type="time"
               InputLabelProps={{
                 shrink: true,

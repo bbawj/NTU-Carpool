@@ -1,20 +1,17 @@
 import React from "react";
 import "./Home.css";
 import Selects from "./Selects";
+import RideTable from "./RideTable";
+import { useApp } from "./contexts/AppContext";
 
 function Home() {
+  const { rides } = useApp();
+
   return (
     <div className="home">
       <h1>NTU Carpool</h1>
       <Selects />
-      <div className="tableHeaders">
-        <p>Driver</p>
-        <p>Pickup</p>
-        <p>Dropoff</p>
-        <p>Time</p>
-        <p>Price</p>
-        <p>Available Seats</p>
-      </div>
+      <RideTable rows={rides} />
     </div>
   );
 }
