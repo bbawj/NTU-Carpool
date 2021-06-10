@@ -9,6 +9,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./PrivateRoute";
 import { AppProvider } from "./contexts/AppContext";
+import Profile from "./Profile";
 
 const THEME = createMuiTheme({
   typography: {
@@ -33,6 +34,7 @@ function App() {
               <Route path="/signup" component={Signup} />
               <AppProvider>
                 <PrivateRoute path="/ride" component={Home} />
+                <PrivateRoute path="/profile" component={Profile} />
               </AppProvider>
             </Switch>
           </AuthProvider>

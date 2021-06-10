@@ -25,6 +25,7 @@ router.get("/", verifyToken, (req, res) => {
   query.exec((err, data) => {
     if (err) return res.status(500).json({ error: err.code });
     res.json(
+      //sort by earliest ride first
       data.sort((a, b) => {
         return a.pickupTime < b.pickupTime
           ? -1

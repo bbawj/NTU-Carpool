@@ -12,7 +12,9 @@ function Home() {
       <div className="homeHeader">
         <h1>NTU Carpool</h1>
         <nav>
-          <li>My Rides</li>
+          <a href="/profile">
+            <li>My Rides</li>
+          </a>
         </nav>
       </div>
 
