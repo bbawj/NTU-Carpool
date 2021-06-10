@@ -78,9 +78,11 @@ function Selects() {
       {role.value === "driver" ? (
         <CreateForm pickup={pickup.value} dropoff={dropoff.value} />
       ) : (
-        <button className="searchBtn" onClick={handleSearch}>
-          SEARCH<span class="material-icons-outlined">search</span>
-        </button>
+        <div>
+          <button className="searchBtn" onClick={handleSearch}>
+            SEARCH<span class="material-icons-outlined">search</span>
+          </button>
+        </div>
       )}
     </div>
   );

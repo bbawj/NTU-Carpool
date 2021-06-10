@@ -12,11 +12,16 @@
   margin-top: 1em;
 }
 
-.tableHeaders {
+.homeHeader {
   display: flex;
   width: 100%;
+  align-items: center;
   justify-content: space-between;
-  background-color: white;
+  background-color: var(--special);
   padding: 1em;
-  border-radius: 5px;
+}
+
+.homeHeader li {
+  list-style: none;
+  cursor: pointer;
 }

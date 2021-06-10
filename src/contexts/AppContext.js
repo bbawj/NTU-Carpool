@@ -16,15 +16,7 @@ export function AppProvider({ children }) {
       const res = await axios.get("/ride", {
         headers: { authorization: localStorage.getItem("token") },
       });
-      setRides(
-        res.data.sort((a, b) => {
-          return a.pickupTime < b.pickupTime
-            ? -1
-            : a.pickupTime > b.pickupTime
-            ? 1
-            : 0;
-        })
-      );
+      setRides(res.data);
     }
     getRides();
     setLoading(false);

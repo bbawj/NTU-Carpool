@@ -9,7 +9,13 @@ function Home() {
 
   return (
     <div className="home">
-      <h1>NTU Carpool</h1>
+      <div className="homeHeader">
+        <h1>NTU Carpool</h1>
+        <nav>
+          <li>My Rides</li>
+        </nav>
+      </div>
+
       <Selects />
       <RideTable rows={rides} />
     </div>

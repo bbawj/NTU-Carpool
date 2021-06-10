@@ -24,7 +24,15 @@ router.get("/", verifyToken, (req, res) => {
   const query = Ride.find(params).where("pickupTime").gt(now);
   query.exec((err, data) => {
     if (err) return res.status(500).json({ error: err.code });
-    res.json(data);
+    res.json(
+      data.sort((a, b) => {
+        return a.pickupTime < b.pickupTime
+          ? -1
+          : a.pickupTime > b.pickupTime
+          ? 1
+          : 0;
+      })
+    );
   });
 });
 

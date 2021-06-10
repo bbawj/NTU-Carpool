@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -7,6 +7,12 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles({
   table: {
@@ -16,8 +22,61 @@ const useStyles = makeStyles({
 
 function RideTable({ rows }) {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const [info, setInfo] = useState({});
+
+  const handleClickOpen = (username, pickup, dropoff, time, price, seats) => {
+    setInfo({
+      username: username,
+      pickup: pickup,
+      dropoff: dropoff,
+      time: new Date(time).toLocaleString("en-SG"),
+      price: price,
+      seats: seats,
+    });
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  function RidePopup({ info }) {
+    return (
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {`Request to join ${info.username}'s ride?`}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <div>{`${info.pickup} to ${info.dropoff}`}</div>
+            <div style={{ display: "flex" }}>{info.time}</div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <span>Price: ${info.price}</span>
+              <span>Seats left: {info.seats}</span>
+            </div>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleClose} color="primary" autoFocus>
+            Send Request
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
   return (
     <TableContainer component={Paper}>
+      <RidePopup info={info} />
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -32,7 +91,19 @@ function RideTable({ rows }) {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row._id}>
+            <TableRow
+              key={row._id}
+              onClick={() =>
+                handleClickOpen(
+                  row.username,
+                  row.pickup,
+                  row.dropoff,
+                  row.pickupTime,
+                  row.price,
+                  row.seats
+                )
+              }
+            >
               <TableCell component="th" scope="row">
                 {row.username}
               </TableCell>

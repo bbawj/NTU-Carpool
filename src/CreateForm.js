@@ -9,6 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { InputAdornment, MenuItem } from "@material-ui/core";
 import axios from "./axios";
 import { useAuth } from "./contexts/AuthContext";
+import "./Selects.css";
 
 function CreateForm({ pickup, dropoff }) {
   const [open, setOpen] = useState(false);
