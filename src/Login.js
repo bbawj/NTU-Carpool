@@ -13,11 +13,13 @@ function Login() {
     setError("");
     e.preventDefault();
     try {
-      await axios.post("/user/login", {
+      const res = await axios.post("/user/login", {
         username: usernameRef.current.value,
         password: passwordRef.current.value,
       });
-      history.push("/home");
+      console.log(res);
+      localStorage.setItem("token", "Bearer " + res.data.accessToken);
+      history.push("/ride");
     } catch (err) {
       setError("Failed to login");
     }
@@ -40,7 +42,7 @@ function Login() {
 
           <div className="inputContainer">
             <span class="material-icons-outlined">lock</span>
-            <input ref={passwordRef} placeholder="Password" type="text" />
+            <input ref={passwordRef} placeholder="Password" type="password" />
           </div>
           <div className="loginBtn">
             <button type="submit">Login</button>

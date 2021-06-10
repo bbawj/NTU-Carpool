@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
+import CreateForm from "./CreateForm";
 import "./Selects.css";
 
 const customStyles = {
@@ -27,7 +28,9 @@ const customStyles = {
 
 function Selects() {
   const [role, setRole] = useState("");
-  console.log(role);
+  const [pickup, setPickup] = useState("");
+  const [dropoff, setDropoff] = useState("");
+
   return (
     <div className="selectContainer">
       <Select
@@ -40,6 +43,7 @@ function Selects() {
         ]}
       />
       <Select
+        onChange={setPickup}
         className="pickup"
         styles={customStyles}
         options={[
@@ -48,6 +52,7 @@ function Selects() {
         ]}
       />
       <Select
+        onChange={setDropoff}
         className="dropoff"
         styles={customStyles}
         options={[
@@ -55,9 +60,13 @@ function Selects() {
           { value: "driver", label: "Driver" },
         ]}
       />
-      <button className="searchBtn">
-        SEARCH<span class="material-icons-outlined">search</span>
-      </button>
+      {role.value === "driver" ? (
+        <CreateForm pickup={pickup} dropoff={dropoff} />
+      ) : (
+        <button className="searchBtn">
+          SEARCH<span class="material-icons-outlined">search</span>
+        </button>
+      )}
     </div>
   );
 }

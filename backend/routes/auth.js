@@ -3,6 +3,7 @@ const User = require("../models/User");
 const Joi = require("joi");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const verifyToken = require("../middleware/verifyToken");
 
 //validate with joi
 const schema = Joi.object({
@@ -52,6 +53,17 @@ router.post("/login", async (req, res) => {
     process.env.ACCESS_TOKEN_SECRET
   );
   res.json({ accessToken: accessToken });
+});
+
+router.get("/isauth", verifyToken, (req, res) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(403);
+    }
+    res.json({ id: req.user._id });
+  } catch {
+    return res.sendStatus(403);
+  }
 });
 
 module.exports = router;
