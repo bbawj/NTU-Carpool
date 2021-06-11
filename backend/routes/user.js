@@ -14,7 +14,7 @@ const schema = Joi.object({
   seats: Joi.number().min(1).max(6).required(),
   price: Joi.number().min(0).required(),
 });
-
+// GET rides
 router.get("/", verifyToken, (req, res) => {
   const now = new Date().toISOString();
   const { pickup, dropoff } = req.query;
@@ -36,7 +36,7 @@ router.get("/", verifyToken, (req, res) => {
     );
   });
 });
-
+// POST new ride
 router.post("/add", verifyToken, async (req, res) => {
   //validate data
   const { error } = schema.validate(req.body);
@@ -56,10 +56,21 @@ router.post("/add", verifyToken, async (req, res) => {
   });
   try {
     const newRide = await ride.save();
-    res.send({ id: newRide._id });
+    res.status(200);
   } catch (err) {
     res.status(400).send(err);
   }
+});
+// UPDATE ride/:id
+router.patch("/:id", verifyToken, (req, res) => {
+  Ride.findOneAndUpdate(
+    { _id: req.params.id },
+    { $addToSet: { requested: req.user._id } },
+    (err, data) => {
+      if (err) return res.status(500).json({ error: err.code });
+      return res.status(200).send("Successful update");
+    }
+  );
 });
 
 module.exports = router;

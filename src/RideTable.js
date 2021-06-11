@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "./axios";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -25,8 +26,17 @@ function RideTable({ rows }) {
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({});
 
-  const handleClickOpen = (username, pickup, dropoff, time, price, seats) => {
+  const handleClickOpen = (
+    id,
+    username,
+    pickup,
+    dropoff,
+    time,
+    price,
+    seats
+  ) => {
     setInfo({
+      id: id,
       username: username,
       pickup: pickup,
       dropoff: dropoff,
@@ -42,6 +52,18 @@ function RideTable({ rows }) {
   };
 
   function RidePopup({ info }) {
+    async function handleSendRequest() {
+      try {
+        await axios.patch(`/ride/${info.id}`, null, {
+          headers: {
+            authorization: localStorage.getItem("token"),
+          },
+        });
+        handleClose();
+      } catch (err) {
+        console.error(err);
+      }
+    }
     return (
       <Dialog
         open={open}
@@ -66,7 +88,7 @@ function RideTable({ rows }) {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleClose} color="primary" autoFocus>
+          <Button onClick={handleSendRequest} color="primary" autoFocus>
             Send Request
           </Button>
         </DialogActions>
@@ -89,12 +111,13 @@ function RideTable({ rows }) {
             <TableCell>Seats</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody style={{ cursor: "pointer" }}>
           {rows.map((row) => (
             <TableRow
               key={row._id}
               onClick={() =>
                 handleClickOpen(
+                  row._id,
                   row.username,
                   row.pickup,
                   row.dropoff,

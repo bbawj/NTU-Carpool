@@ -14,7 +14,7 @@ app.use(express.json());
 //connect to db
 mongoose.connect(
   process.env.DB_CONNECT,
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false },
   () => console.log("Connected to DB")
 );
 mongoose.set("useCreateIndex", true);

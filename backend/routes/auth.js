@@ -74,19 +74,22 @@ router.get("/:userID", verifyToken, async (req, res) => {
   const user = await User.findOne({ _id: req.user._id });
   if (!user) return res.status(400).send("User not found");
   const query = Ride.find({ username: user.username });
-  query.exec((err, data) => {
-    if (err) return res.status(500).json({ error: err.code });
-    res.json(
-      //sort by latest ride first
-      data.sort((a, b) => {
-        return a.pickupTime < b.pickupTime
-          ? 1
-          : a.pickupTime > b.pickupTime
-          ? -1
-          : 0;
-      })
-    );
-  });
+  query
+    .populate("riders")
+    .populate("requested")
+    .exec((err, data) => {
+      if (err) return res.status(500).json({ error: err.code });
+      res.json(
+        //sort by latest ride first
+        data.sort((a, b) => {
+          return a.pickupTime < b.pickupTime
+            ? 1
+            : a.pickupTime > b.pickupTime
+            ? -1
+            : 0;
+        })
+      );
+    });
 });
 
 module.exports = router;
