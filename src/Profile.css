@@ -6,16 +6,13 @@
 }
 
 .profileHeader {
-  height: 8%;
   align-items: center;
-}
-
-.profileHeader > h1 {
+  padding: 1em;
   background-color: var(--special);
 }
 
 .profileContent {
-  height: 92%;
+  height: 80%;
   overflow-y: scroll;
   -ms-overflow-style: none;
   scrollbar-width: none;
