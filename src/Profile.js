@@ -7,10 +7,10 @@ import Tab from "@material-ui/core/Tab";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import { Avatar } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
 
 function Profile() {
   const [open, setOpen] = useState(false);
@@ -56,6 +56,7 @@ function Profile() {
   const [activeRides, setActiveRides] = useState([]);
   const [photo, setPhoto] = useState("");
   const [value, setValue] = useState(0);
+  const [error, setError] = useState(false);
   const { currentUser } = useAuth();
 
   const handleChange = (event, newValue) => {
@@ -68,25 +69,36 @@ function Profile() {
   }
   // upload image to db
   async function handleImageChange(event) {
-    const image = event.target.files[0];
-    if (image) {
-      let data = new FormData();
-      data.append("file", image, image.name);
-      const res = await axios.post("/images/upload", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          authorization: localStorage.getItem("token"),
-        },
-      });
-
-      await axios.patch(
-        `/user/${currentUser}`,
-        { profileImage: res.data.file.filename },
-        {
+    try {
+      const image = event.target.files[0];
+      if (image) {
+        let data = new FormData();
+        data.append("file", image, image.name);
+        const res = await axios.post("/image/upload", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            authorization: localStorage.getItem("token"),
+          },
+        });
+        //update USER object with image/filename & image/ID
+        const oldId = await axios.patch(
+          `/user/${currentUser}`,
+          {
+            profileImageName: res.data.file.filename,
+            profileImageId: res.data.file.id,
+          },
+          {
+            headers: { authorization: localStorage.getItem("token") },
+          }
+        );
+        setPhoto(`image/${res.data.file.filename}`);
+        console.log(oldId);
+        await axios.delete(`image/${oldId.data.prevId}`, {
           headers: { authorization: localStorage.getItem("token") },
-        }
-      );
-      setPhoto(`image/${res.data.file.filename}`);
+        });
+      }
+    } catch (err) {
+      setError(true);
     }
 
     // await axios.post(`/user/${currentUser}`, {profileImage: image.})
@@ -113,7 +125,7 @@ function Profile() {
         const res = await axios.get(`/user/${currentUser}/image`, {
           headers: { authorization: localStorage.getItem("token") },
         });
-        setPhoto(`image/${res.data.profileImage}`);
+        setPhoto(`image/${res.data.profileImageName}`);
       } catch (err) {
         console.error(err);
       }
@@ -121,9 +133,19 @@ function Profile() {
     getMyRides();
     getPhoto();
   }, []);
-  console.log(photo);
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setError(false);
+  };
   return (
     <div className="profile">
+      <Snackbar open={error} autoHideDuration={6000} onClose={handleErrorClose}>
+        Failed to update profile picture.
+      </Snackbar>
       <ProfilePopup info={info} />
       <div className="profileHeader">
         <h1>My Rides</h1>

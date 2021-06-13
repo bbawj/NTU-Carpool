@@ -93,21 +93,27 @@ router.get("/:userID/ride", verifyToken, async (req, res) => {
 });
 
 // PATCH profileImage of UID
-router.patch("/:userID", verifyToken, (req, res) => {
-  User.findOneAndUpdate(
-    { _id: req.user._id },
-    { $set: { profileImage: req.body.profileImage } },
-    (err, data) => {
-      if (err) return res.status(500).json({ error: err });
-      return res.json(data);
-    }
-  );
+router.patch("/:userID", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $set: {
+          profileImageName: req.body.profileImageName,
+          profileImageId: req.body.profileImageId,
+        },
+      }
+    );
+    return res.json({ prevId: user.profileImageId });
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
 });
 
 router.get("/:userID/image", verifyToken, (req, res) => {
-  User.findOne({ _id: req.user._id }, "profileImage", (err, user) => {
+  User.findOne({ _id: req.user._id }, "profileImageName", (err, user) => {
     if (err) return res.status(500).json({ error: err });
-    return res.json({ profileImage: user.profileImage });
+    return res.json({ profileImageName: user.profileImageName });
   });
 });
 

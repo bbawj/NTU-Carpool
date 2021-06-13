@@ -75,7 +75,7 @@ app.use("/ride", userRoute);
 const verifyToken = require("./middleware/verifyToken");
 
 //@route POST /upload
-app.post("/images/upload", [verifyToken, upload.single("file")], (req, res) => {
+app.post("/image/upload", [verifyToken, upload.single("file")], (req, res) => {
   res.json({ file: req.file });
 });
 
@@ -88,7 +88,6 @@ app.get("/image/:filename", (req, res) => {
         err: "No file exists",
       });
     }
-
     // Check if image
     if (
       file[0].contentType === "image/jpeg" ||
@@ -102,6 +101,13 @@ app.get("/image/:filename", (req, res) => {
         err: "Not an image",
       });
     }
+  });
+});
+
+//DELETE profileImage
+app.delete("/image/:imageId", verifyToken, (req, res) => {
+  gfs.delete(new mongoose.Types.ObjectId(req.params.imageId), (err, data) => {
+    if (err) return res.status(404).json({ err: err });
   });
 });
 
