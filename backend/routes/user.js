@@ -56,7 +56,7 @@ router.post("/add", verifyToken, async (req, res) => {
   });
   try {
     const newRide = await ride.save();
-    res.status(200);
+    res.json(newRide);
   } catch (err) {
     res.status(400).send(err);
   }

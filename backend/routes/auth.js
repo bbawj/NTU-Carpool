@@ -66,8 +66,8 @@ router.get("/isauth", verifyToken, (req, res) => {
     return res.sendStatus(403);
   }
 });
-
-router.get("/:userID", verifyToken, async (req, res) => {
+// GET ride of specific UID
+router.get("/:userID/ride", verifyToken, async (req, res) => {
   //validate if request is from current user
   if (req.user._id !== req.params.userID) return res.status(401);
   //validate if user exists
@@ -90,6 +90,25 @@ router.get("/:userID", verifyToken, async (req, res) => {
         })
       );
     });
+});
+
+// PATCH profileImage of UID
+router.patch("/:userID", verifyToken, (req, res) => {
+  User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $set: { profileImage: req.body.profileImage } },
+    (err, data) => {
+      if (err) return res.status(500).json({ error: err });
+      return res.json(data);
+    }
+  );
+});
+
+router.get("/:userID/image", verifyToken, (req, res) => {
+  User.findOne({ _id: req.user._id }, "profileImage", (err, user) => {
+    if (err) return res.status(500).json({ error: err });
+    return res.json({ profileImage: user.profileImage });
+  });
 });
 
 module.exports = router;

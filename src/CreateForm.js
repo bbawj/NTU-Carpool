@@ -10,6 +10,7 @@ import { InputAdornment, MenuItem } from "@material-ui/core";
 import axios from "./axios";
 import { useAuth } from "./contexts/AuthContext";
 import "./Selects.css";
+import { useApp } from "./contexts/AppContext";
 
 function CreateForm({ pickup, dropoff }) {
   const [open, setOpen] = useState(false);
@@ -19,6 +20,7 @@ function CreateForm({ pickup, dropoff }) {
   const [price, setPrice] = useState(0);
   const [error, setError] = useState("");
   const { currentUser } = useAuth();
+  const { setRides } = useApp();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -36,18 +38,20 @@ function CreateForm({ pickup, dropoff }) {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      await axios.post(
-        "/ride/add",
-        {
-          userid: currentUser,
-          pickup: pickup,
-          dropoff: dropoff,
-          pickupTime: `${date} ${pickupTime}`,
-          seats: seats,
-          price: price,
-        },
-        { headers: { authorization: localStorage.getItem("token") } }
-      );
+      const payload = {
+        userid: currentUser,
+        pickup: pickup,
+        dropoff: dropoff,
+        pickupTime: `${date} ${pickupTime}`,
+        seats: seats,
+        price: price,
+      };
+      const res = await axios.post("/ride/add", payload, {
+        headers: { authorization: localStorage.getItem("token") },
+      });
+      setRides((prev) => {
+        return [res.data, ...prev];
+      });
       handleClose();
     } catch (err) {
       console.log(err);

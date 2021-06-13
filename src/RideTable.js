@@ -75,14 +75,12 @@ function RideTable({ rows }) {
           {`Request to join ${info.username}'s ride?`}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            <div>{`${info.pickup} to ${info.dropoff}`}</div>
-            <div style={{ display: "flex" }}>{info.time}</div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span>Price: ${info.price}</span>
-              <span>Seats left: {info.seats}</span>
-            </div>
-          </DialogContentText>
+          <div>{`${info.pickup} to ${info.dropoff}`}</div>
+          <div style={{ display: "flex" }}>{info.time}</div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span>Price: ${info.price}</span>
+            <span>Seats left: {info.seats}</span>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
