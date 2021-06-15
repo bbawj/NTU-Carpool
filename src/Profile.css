@@ -13,6 +13,12 @@
   background-color: var(--special);
 }
 
+.profileSubheader {
+  display: flex;
+  padding-top: 0.5em;
+  padding-left: 1em;
+}
+
 .profileContent {
   height: 80%;
   overflow-y: scroll;
@@ -23,7 +29,12 @@
 .profileContent::-webkit-scrollbar {
   display: none;
 }
-
+.passengerTabs {
+  color: grey;
+}
+.passengerTabs .MuiTab-wrapper {
+  flex-direction: row-reverse;
+}
 .profilePopup {
   display: flex;
   align-items: center;

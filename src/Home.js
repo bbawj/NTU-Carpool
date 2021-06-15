@@ -13,7 +13,9 @@ function Home() {
         <h1>NTU Carpool</h1>
         <nav>
           <a href="/profile">
-            <li>My Rides</li>
+            <li>
+              <h3>My Rides</h3>
+            </li>
           </a>
         </nav>
       </div>

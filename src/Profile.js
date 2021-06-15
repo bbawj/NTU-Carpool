@@ -1,6 +1,7 @@
 import axios from "./axios";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "./contexts/AuthContext";
+import Passenger from "./Passenger";
 import "./Profile.css";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -16,6 +17,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import Tooltip from "@material-ui/core/Tooltip";
+import DriveEtaIcon from "@material-ui/icons/DriveEta";
 
 function Profile() {
   const [open, setOpen] = useState(false);
@@ -44,7 +46,7 @@ function Profile() {
           { headers: { authorization: localStorage.getItem("token") } }
         );
         if (info.active) {
-          const copy = activeRides.slice();
+          const copy = activeCreatedRides.slice();
           copy[info.idx].requested = copy[info.idx].requested.map((item) => {
             if (item._id === id)
               return {
@@ -53,7 +55,7 @@ function Profile() {
               };
             return item;
           });
-          setActiveRides(copy);
+          setActiveCreatedRides(copy);
         }
         const reqCopy = info.requested.map((item) => {
           if (item._id === id)
@@ -76,7 +78,7 @@ function Profile() {
           { headers: { authorization: localStorage.getItem("token") } }
         );
         if (info.active) {
-          const copy = activeRides.slice();
+          const copy = activeCreatedRides.slice();
           copy[info.idx].requested = copy[info.idx].requested.map((item) => {
             if (item._id === id)
               return {
@@ -85,7 +87,7 @@ function Profile() {
               };
             return item;
           });
-          setActiveRides(copy);
+          setActiveCreatedRides(copy);
         }
         const reqCopy = info.requested.map((item) => {
           if (item._id === id)
@@ -108,12 +110,14 @@ function Profile() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{`Requests`}</DialogTitle>
-        <DialogContent>
+        <DialogContent style={{ minWidth: "200px" }}>
           {info.requested && info.requested.length === 0 && <p>No requests</p>}
           {info.requested &&
             info.requested.map((req, idx) => {
               return req.text ? (
-                <p key={idx}>{req.text}</p>
+                <p className="profilePopup" key={idx}>
+                  {req.text}
+                </p>
               ) : (
                 <div key={req._id} className="profilePopup">
                   <p style={{ marginRight: "2em" }}>{req.username}</p>
@@ -141,7 +145,9 @@ function Profile() {
   }
 
   const [historyRides, setHistoryRides] = useState([]);
-  const [activeRides, setActiveRides] = useState([]);
+  const [activeCreatedRides, setActiveCreatedRides] = useState([]);
+  const [activeJoinedRides, setActiveJoinedRides] = useState([]);
+  const [activeRequestedRides, setActiveRequestedRides] = useState([]);
   const [photo, setPhoto] = useState("");
   const [value, setValue] = useState(0);
   const [error, setError] = useState(false);
@@ -199,8 +205,32 @@ function Profile() {
           },
         });
         console.log(res);
-        setActiveRides(res.data.filter((ride) => ride.pickupTime > now));
-        setHistoryRides(res.data.filter((ride) => ride.pickupTime < now));
+        setActiveCreatedRides(
+          res.data.filter(
+            (ride) => ride.pickupTime > now && ride.ownerId === currentUser
+          )
+        );
+        setActiveJoinedRides(
+          res.data.filter(
+            (ride) =>
+              ride.pickupTime > now &&
+              ride.riders.some((item) => item._id === currentUser)
+          )
+        );
+        setActiveRequestedRides(
+          res.data.filter(
+            (ride) =>
+              ride.pickupTime > now &&
+              ride.requested.some((item) => item._id === currentUser)
+          )
+        );
+        setHistoryRides(
+          res.data.filter(
+            (ride) =>
+              ride.pickupTime < now &&
+              ride.riders.some((item) => item._id === currentUser)
+          )
+        );
       } catch (err) {
         console.error(err);
       }
@@ -256,12 +286,17 @@ function Profile() {
         value={value}
         onChange={handleChange}
         aria-label="simple tabs example"
+        style={{ marginLeft: "0.5em" }}
       >
         <Tab color="primary" label="Active Rides" />
         <Tab label="History" />
       </Tabs>
       <div className="profileContent" value={value} hidden={value !== 0}>
-        {activeRides.map((ride, idx) => (
+        <div className="profileSubheader">
+          <h4>Created</h4>
+          <DriveEtaIcon />
+        </div>
+        {activeCreatedRides.map((ride, idx) => (
           <div className="myRideContainer" key={ride._id}>
             <div
               className="myRide"
@@ -275,7 +310,12 @@ function Profile() {
                 )
               }
             >
-              <h4>{new Date(ride.pickupTime).toLocaleString("en-SG")}</h4>
+              <h4>
+                {new Date(ride.pickupTime).toLocaleString("en-SG", {
+                  dateStyle: "short",
+                  timeStyle: "short",
+                })}
+              </h4>
               {`${ride.pickup} to ${ride.dropoff}`}
             </div>
             {ride.riders.map((rider) => (
@@ -288,6 +328,11 @@ function Profile() {
             {ride.requested.length !== 0 && <AnnouncementIcon />}
           </div>
         ))}
+
+        <Passenger
+          joined={activeJoinedRides}
+          requested={activeRequestedRides}
+        />
       </div>
       <div className="profileContent" value={value} hidden={value !== 1}>
         {historyRides.map((ride, idx) => (

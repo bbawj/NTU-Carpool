@@ -119,7 +119,7 @@ function RideTable({ rows }) {
             <TableCell>Date</TableCell>
             <TableCell>Time</TableCell>
             <TableCell>Price</TableCell>
-            <TableCell>Seats</TableCell>
+            <TableCell>Riders</TableCell>
           </TableRow>
         </TableHead>
         <TableBody style={{ cursor: "pointer" }}>
@@ -129,7 +129,7 @@ function RideTable({ rows }) {
               onClick={() =>
                 handleClickOpen(
                   row._id,
-                  row.username,
+                  row.ownerId.username,
                   row.pickup,
                   row.dropoff,
                   row.pickupTime,

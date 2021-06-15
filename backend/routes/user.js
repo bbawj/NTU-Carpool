@@ -57,7 +57,8 @@ router.post("/add", verifyToken, async (req, res) => {
   });
   try {
     const newRide = await ride.save();
-    res.json(newRide);
+    const data = await newRide.populate("ownerId").execPopulate();
+    res.json(data);
   } catch (err) {
     res.status(400).send(err);
   }

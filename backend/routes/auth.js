@@ -73,7 +73,13 @@ router.get("/:userID/ride", verifyToken, async (req, res) => {
   //validate if user exists
   const user = await User.findOne({ _id: req.user._id });
   if (!user) return res.status(400).send("User not found");
-  const query = Ride.find({ ownerId: req.user._id });
+  const query = Ride.find({
+    $or: [
+      { ownerId: req.user._id },
+      { riders: req.user._id },
+      { requested: req.user._id },
+    ],
+  });
   query
     .populate("riders")
     .populate("requested")
