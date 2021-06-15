@@ -2,10 +2,7 @@ const mongoose = require("mongoose");
 
 const rideSchema = new mongoose.Schema(
   {
-    username: {
-      type: String,
-      required: true,
-    },
+    ownerId: { type: mongoose.Schema.ObjectId, ref: "User" },
     pickup: {
       type: String,
       required: true,

@@ -38,8 +38,9 @@ function CreateForm({ pickup, dropoff }) {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
+      console.log(currentUser);
       const payload = {
-        userid: currentUser,
+        ownerId: currentUser,
         pickup: pickup,
         dropoff: dropoff,
         pickupTime: `${date} ${pickupTime}`,

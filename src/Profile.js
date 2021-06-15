@@ -54,17 +54,6 @@ function Profile() {
             return item;
           });
           setActiveRides(copy);
-        } else {
-          const copy = historyRides.slice();
-          copy[info.idx].requested = copy[info.idx].requested.map((item) => {
-            if (item._id === id)
-              return {
-                ...item,
-                text: `You have declined ${item.username}'s request`,
-              };
-            return item;
-          });
-          setHistoryRides(copy);
         }
         const reqCopy = info.requested.map((item) => {
           if (item._id === id)
@@ -83,7 +72,7 @@ function Profile() {
       try {
         await axios.patch(
           `/ride/${info.id}`,
-          { declineRequest: true },
+          { id: id, declineRequest: true },
           { headers: { authorization: localStorage.getItem("token") } }
         );
         if (info.active) {
@@ -92,23 +81,21 @@ function Profile() {
             if (item._id === id)
               return {
                 ...item,
-                text: `You have accepted ${item.username}'s request`,
+                text: `You have declined ${item.username}'s request`,
               };
             return item;
           });
           setActiveRides(copy);
-        } else {
-          const copy = historyRides.slice();
-          copy[info.idx].requested = copy[info.idx].requested.map((item) => {
-            if (item._id === id)
-              return {
-                ...item,
-                text: `You have accepted ${item.username}'s request`,
-              };
-            return item;
-          });
-          setHistoryRides(copy);
         }
+        const reqCopy = info.requested.map((item) => {
+          if (item._id === id)
+            return {
+              ...item,
+              text: `You have declined ${item.username}'s request`,
+            };
+          return item;
+        });
+        setInfo((prev) => ({ ...prev, requested: reqCopy }));
       } catch (err) {
         console.error(err);
       }
@@ -193,7 +180,6 @@ function Profile() {
           }
         );
         setPhoto(`image/${res.data.file.filename}`);
-        console.log(oldId);
         await axios.delete(`image/${oldId.data.prevId}`, {
           headers: { authorization: localStorage.getItem("token") },
         });
@@ -212,6 +198,7 @@ function Profile() {
             authorization: localStorage.getItem("token"),
           },
         });
+        console.log(res);
         setActiveRides(res.data.filter((ride) => ride.pickupTime > now));
         setHistoryRides(res.data.filter((ride) => ride.pickupTime < now));
       } catch (err) {
@@ -247,11 +234,13 @@ function Profile() {
       <ProfilePopup info={info} />
       <div className="profileHeader">
         <h1>My Rides</h1>
-        <Avatar
-          onClick={handleEditPicture}
-          src={`http://localhost:5000/${photo}`}
-          alt=""
-        />
+        <Tooltip title="Change profile picture" placement="bottom">
+          <Avatar
+            onClick={handleEditPicture}
+            src={`http://localhost:5000/${photo}`}
+            alt=""
+          />
+        </Tooltip>
         <form encType="multipart/form-data" style={{ display: "none" }}>
           <input
             type="file"
@@ -303,12 +292,7 @@ function Profile() {
       <div className="profileContent" value={value} hidden={value !== 1}>
         {historyRides.map((ride, idx) => (
           <div className="myRideContainer" key={ride._id}>
-            <div
-              className="myRide"
-              onClick={() =>
-                handleClickOpen(ride._id, idx, ride.riders, ride.requested)
-              }
-            >
+            <div className="myRide">
               <h4>{new Date(ride.pickupTime).toLocaleString("en-SG")}</h4>
               {`${ride.pickup} to ${ride.dropoff}`}
             </div>

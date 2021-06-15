@@ -73,7 +73,7 @@ router.get("/:userID/ride", verifyToken, async (req, res) => {
   //validate if user exists
   const user = await User.findOne({ _id: req.user._id });
   if (!user) return res.status(400).send("User not found");
-  const query = Ride.find({ username: user.username });
+  const query = Ride.find({ ownerId: req.user._id });
   query
     .populate("riders")
     .populate("requested")
@@ -95,6 +95,8 @@ router.get("/:userID/ride", verifyToken, async (req, res) => {
 // PATCH profileImage of UID
 router.patch("/:userID", verifyToken, async (req, res) => {
   try {
+    //validate if request is from current user
+    if (req.user._id !== req.params.userID) return res.status(401);
     const user = await User.findOneAndUpdate(
       { _id: req.user._id },
       {

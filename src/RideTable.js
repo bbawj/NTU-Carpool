@@ -13,6 +13,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
+import { Avatar } from "@material-ui/core";
+import { useAuth } from "./contexts/AuthContext";
 
 const useStyles = makeStyles({
   table: {
@@ -24,6 +26,7 @@ function RideTable({ rows }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({});
+  const { currentUser } = useAuth();
 
   const handleClickOpen = (
     id,
@@ -32,7 +35,8 @@ function RideTable({ rows }) {
     dropoff,
     time,
     price,
-    seats
+    seats,
+    riders
   ) => {
     setInfo({
       id: id,
@@ -42,6 +46,7 @@ function RideTable({ rows }) {
       time: new Date(time).toLocaleString("en-SG"),
       price: price,
       seats: seats,
+      riders: riders,
     });
     setOpen(true);
   };
@@ -89,9 +94,14 @@ function RideTable({ rows }) {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSendRequest} color="primary" autoFocus>
-            Send Request
-          </Button>
+          {info.riders &&
+            !info.riders
+              .reduce((a, b) => a.concat(b._id), [])
+              .includes(currentUser) && (
+              <Button onClick={handleSendRequest} color="primary" autoFocus>
+                Send Request
+              </Button>
+            )}
         </DialogActions>
       </Dialog>
     );
@@ -124,12 +134,16 @@ function RideTable({ rows }) {
                   row.dropoff,
                   row.pickupTime,
                   row.price,
-                  row.seats
+                  row.seats,
+                  row.riders
                 )
               }
             >
               <TableCell component="th" scope="row">
-                {row.username}
+                <Avatar
+                  alt={row.ownerId.username}
+                  src={`http://localhost:5000/image/${row.ownerId.profileImageName}`}
+                />
               </TableCell>
               <TableCell>{row.pickup}</TableCell>
               <TableCell>{row.dropoff}</TableCell>
@@ -143,7 +157,14 @@ function RideTable({ rows }) {
                 })}
               </TableCell>
               <TableCell>{row.price}</TableCell>
-              <TableCell>{row.seats}</TableCell>
+              <TableCell>
+                {row.riders.map((rider) => (
+                  <Avatar
+                    key={rider._id}
+                    src={`http://localhost:5000/image/${rider.profileImageName}`}
+                  />
+                ))}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

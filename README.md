@@ -1,1 +1,1 @@
-Carpooling webapp for built with the MERN stack
+Carpooling webapp built with the MERN stack
