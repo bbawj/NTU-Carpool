@@ -337,6 +337,9 @@ function Profile() {
         />
       </div>
       <div className="profileContent" value={value} hidden={value !== 1}>
+        {historyRides.length === 0 && (
+          <p className="placeholderContent">No previous rides.</p>
+        )}
         {historyRides.map((ride, idx) => (
           <div className="myRideContainer" key={ride._id}>
             <div className="myRide">
