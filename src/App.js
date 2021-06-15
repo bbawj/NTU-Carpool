@@ -24,9 +24,9 @@ const THEME = createMuiTheme({
 
 function App() {
   return (
-    <div className="app">
-      <ThemeProvider theme={THEME}>
-        <Router>
+    <Router>
+      <div className="app">
+        <ThemeProvider theme={THEME}>
           <AuthProvider>
             <Switch>
               <Route exact path="/" component={Login} />
@@ -38,9 +38,9 @@ function App() {
               </AppProvider>
             </Switch>
           </AuthProvider>
-        </Router>
-      </ThemeProvider>
-    </div>
+        </ThemeProvider>
+      </div>
+    </Router>
   );
 }
 

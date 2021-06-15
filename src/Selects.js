@@ -61,8 +61,16 @@ function Selects() {
         styles={customStyles}
         options={[
           { value: "", label: "None" },
-          { value: "rider", label: "Rider" },
-          { value: "driver", label: "Driver" },
+          { value: "Hall 1", label: "Hall 1" },
+          { value: "Hall 2", label: "Hall 2" },
+          { value: "Hall 12", label: "Hall 12" },
+          { value: "Wee Kim Wee", label: "Wee Kim Wee" },
+          { value: "Crescent Hall", label: "Crescent Hall" },
+          { value: "Hive", label: "Hive" },
+          { value: "NIE", label: "NIE" },
+          { value: "Carpark A", label: "Carpark A" },
+          { value: "Carpark B", label: "Carpark B" },
+          { value: "Carpark C", label: "Carpark C" },
         ]}
       />
       <Select
