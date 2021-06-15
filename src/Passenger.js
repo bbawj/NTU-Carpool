@@ -38,6 +38,11 @@ function Passenger({ joined, requested }) {
       </Tabs>
 
       <div value={value} hidden={value !== 0}>
+        {joined.length === 0 && (
+          <p className="placeholderContent">
+            You will see rides that you have joined here!
+          </p>
+        )}
         {joined &&
           joined.map((ride) => (
             <div className="myRideContainer" key={ride._id}>
@@ -61,6 +66,11 @@ function Passenger({ joined, requested }) {
           ))}
       </div>
       <div value={value} hidden={value !== 1}>
+        {requested.length === 0 && (
+          <p className="placeholderContent">
+            You will see your requested rides here!
+          </p>
+        )}
         {requested &&
           requested.map((ride) => (
             <div className="myPassengerContainer" key={ride._id}>

@@ -51,7 +51,7 @@ function Profile() {
             if (item._id === id)
               return {
                 ...item,
-                text: `You have declined ${item.username}'s request`,
+                text: `You have accepted ${item.username}'s request`,
               };
             return item;
           });
@@ -61,7 +61,7 @@ function Profile() {
           if (item._id === id)
             return {
               ...item,
-              text: `You have declined ${item.username}'s request`,
+              text: `You have accepted ${item.username}'s request`,
             };
           return item;
         });
@@ -294,6 +294,11 @@ function Profile() {
           <h4>Created</h4>
           <DriveEtaIcon />
         </div>
+        {activeCreatedRides.length === 0 && (
+          <p className="placeholderContent">
+            You have no created active rides.
+          </p>
+        )}
         {activeCreatedRides.map((ride, idx) => (
           <div className="myRideContainer" key={ride._id}>
             <div
