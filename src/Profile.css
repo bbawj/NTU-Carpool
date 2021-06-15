@@ -6,6 +6,8 @@
 }
 
 .profileHeader {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 1em;
   background-color: var(--special);
@@ -22,11 +24,23 @@
   display: none;
 }
 
-.myRide {
+.profilePopup {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+}
+
+.myRideContainer {
+  display: flex;
+  align-items: center;
   background-color: white;
   padding: 1em;
   margin-top: 0.5em;
   border-radius: 5px;
+  cursor: pointer;
+}
+
+.myRide {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }

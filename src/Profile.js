@@ -11,12 +11,23 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import { Avatar } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
+import AnnouncementIcon from "@material-ui/icons/Announcement";
+import IconButton from "@material-ui/core/IconButton";
+import CheckIcon from "@material-ui/icons/Check";
+import ClearIcon from "@material-ui/icons/Clear";
+import Tooltip from "@material-ui/core/Tooltip";
 
 function Profile() {
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({});
-  const handleClickOpen = (riders, requested) => {
-    setInfo({ riders: riders, requested: requested });
+  const handleClickOpen = (id, idx, riders, requested, active) => {
+    setInfo({
+      id: id,
+      idx: idx,
+      riders: riders,
+      requested: requested,
+      active: active,
+    });
     setOpen(true);
   };
 
@@ -25,6 +36,83 @@ function Profile() {
   };
 
   function ProfilePopup({ info }) {
+    async function handleAccept(id) {
+      try {
+        await axios.patch(
+          `/ride/${info.id}`,
+          { id: id, acceptRequest: true },
+          { headers: { authorization: localStorage.getItem("token") } }
+        );
+        if (info.active) {
+          const copy = activeRides.slice();
+          copy[info.idx].requested = copy[info.idx].requested.map((item) => {
+            if (item._id === id)
+              return {
+                ...item,
+                text: `You have declined ${item.username}'s request`,
+              };
+            return item;
+          });
+          setActiveRides(copy);
+        } else {
+          const copy = historyRides.slice();
+          copy[info.idx].requested = copy[info.idx].requested.map((item) => {
+            if (item._id === id)
+              return {
+                ...item,
+                text: `You have declined ${item.username}'s request`,
+              };
+            return item;
+          });
+          setHistoryRides(copy);
+        }
+        const reqCopy = info.requested.map((item) => {
+          if (item._id === id)
+            return {
+              ...item,
+              text: `You have declined ${item.username}'s request`,
+            };
+          return item;
+        });
+        setInfo((prev) => ({ ...prev, requested: reqCopy }));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    async function handleDecline(id) {
+      try {
+        await axios.patch(
+          `/ride/${info.id}`,
+          { declineRequest: true },
+          { headers: { authorization: localStorage.getItem("token") } }
+        );
+        if (info.active) {
+          const copy = activeRides.slice();
+          copy[info.idx].requested = copy[info.idx].requested.map((item) => {
+            if (item._id === id)
+              return {
+                ...item,
+                text: `You have accepted ${item.username}'s request`,
+              };
+            return item;
+          });
+          setActiveRides(copy);
+        } else {
+          const copy = historyRides.slice();
+          copy[info.idx].requested = copy[info.idx].requested.map((item) => {
+            if (item._id === id)
+              return {
+                ...item,
+                text: `You have accepted ${item.username}'s request`,
+              };
+            return item;
+          });
+          setHistoryRides(copy);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
     return (
       <Dialog
         open={open}
@@ -36,9 +124,22 @@ function Profile() {
         <DialogContent>
           {info.requested && info.requested.length === 0 && <p>No requests</p>}
           {info.requested &&
-            info.requested.map((req) => (
-              <div key={req._id}>{req.username}</div>
-            ))}
+            info.requested.map((req, idx) => {
+              return req.text ? (
+                <p key={idx}>{req.text}</p>
+              ) : (
+                <div key={req._id} className="profilePopup">
+                  <p style={{ marginRight: "2em" }}>{req.username}</p>
+
+                  <IconButton onClick={() => handleAccept(req._id)}>
+                    <CheckIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDecline(req._id)}>
+                    <ClearIcon />
+                  </IconButton>
+                </div>
+              );
+            })}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -100,15 +201,12 @@ function Profile() {
     } catch (err) {
       setError(true);
     }
-
-    // await axios.post(`/user/${currentUser}`, {profileImage: image.})
   }
 
   useEffect(() => {
     async function getMyRides() {
       try {
         const now = new Date().toISOString();
-        // await axios.get("images/")
         const res = await axios.get(`/user/${currentUser}/ride`, {
           headers: {
             authorization: localStorage.getItem("token"),
@@ -144,7 +242,7 @@ function Profile() {
   return (
     <div className="profile">
       <Snackbar open={error} autoHideDuration={6000} onClose={handleErrorClose}>
-        Failed to update profile picture.
+        <p>Failed to update profile picture.</p>
       </Snackbar>
       <ProfilePopup info={info} />
       <div className="profileHeader">
@@ -154,12 +252,12 @@ function Profile() {
           src={`http://localhost:5000/${photo}`}
           alt=""
         />
-        <form encType="multipart/form-data">
+        <form encType="multipart/form-data" style={{ display: "none" }}>
           <input
             type="file"
             id="imageInput"
             name="avatar"
-            hidden="hidden"
+            style={{ display: "none" }}
             onChange={handleImageChange}
           />
         </form>
@@ -174,26 +272,55 @@ function Profile() {
         <Tab label="History" />
       </Tabs>
       <div className="profileContent" value={value} hidden={value !== 0}>
-        {activeRides.map((ride) => (
-          <div
-            key={ride._id}
-            className="myRide"
-            onClick={() => handleClickOpen(ride.riders, ride.requested)}
-          >
-            <h4>{new Date(ride.pickupTime).toLocaleString("en-SG")}</h4>
-            {`${ride.pickup} to ${ride.dropoff}`}
+        {activeRides.map((ride, idx) => (
+          <div className="myRideContainer" key={ride._id}>
+            <div
+              className="myRide"
+              onClick={() =>
+                handleClickOpen(
+                  ride._id,
+                  idx,
+                  ride.riders,
+                  ride.requested,
+                  true
+                )
+              }
+            >
+              <h4>{new Date(ride.pickupTime).toLocaleString("en-SG")}</h4>
+              {`${ride.pickup} to ${ride.dropoff}`}
+            </div>
+            {ride.riders.map((rider) => (
+              <Tooltip key={rider._id} title={rider.username} placement="top">
+                <Avatar
+                  src={`http://localhost:5000/image/${rider.profileImageName}`}
+                />
+              </Tooltip>
+            ))}
+            {ride.requested.length !== 0 && <AnnouncementIcon />}
           </div>
         ))}
       </div>
       <div className="profileContent" value={value} hidden={value !== 1}>
-        {historyRides.map((ride) => (
-          <div
-            key={ride._id}
-            className="myRide"
-            onClick={() => handleClickOpen(ride.riders, ride.requested)}
-          >
-            <h4>{new Date(ride.pickupTime).toLocaleString("en-SG")}</h4>
-            {`${ride.pickup} to ${ride.dropoff}`}
+        {historyRides.map((ride, idx) => (
+          <div className="myRideContainer" key={ride._id}>
+            <div
+              className="myRide"
+              onClick={() =>
+                handleClickOpen(ride._id, idx, ride.riders, ride.requested)
+              }
+            >
+              <h4>{new Date(ride.pickupTime).toLocaleString("en-SG")}</h4>
+              {`${ride.pickup} to ${ride.dropoff}`}
+            </div>
+            {ride.riders.map((rider) => (
+              <Tooltip key={rider._id} title={rider.username} placement="top">
+                <Avatar
+                  key={rider._id}
+                  src={`http://localhost:5000/image/${rider.profileImageName}`}
+                />
+              </Tooltip>
+            ))}
+            {ride.requested.length !== 0 && <AnnouncementIcon />}
           </div>
         ))}
       </div>

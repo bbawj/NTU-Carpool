@@ -63,14 +63,37 @@ router.post("/add", verifyToken, async (req, res) => {
 });
 // UPDATE ride/:id
 router.patch("/:id", verifyToken, (req, res) => {
-  Ride.findOneAndUpdate(
-    { _id: req.params.id },
-    { $addToSet: { requested: req.user._id } },
-    (err, data) => {
-      if (err) return res.status(500).json({ error: err.code });
-      return res.status(200).send("Successful update");
-    }
-  );
+  if (req.body.sendRequest) {
+    Ride.findOneAndUpdate(
+      { _id: req.params.id },
+      { $addToSet: { requested: req.user._id } },
+      (err, data) => {
+        if (err) return res.status(500).json({ error: err.code });
+        return res.status(200).send("Successful update");
+      }
+    );
+  } else if (req.body.acceptRequest) {
+    Ride.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $addToSet: { riders: req.body.id },
+        $pull: { requested: req.body.id },
+      },
+      (err, data) => {
+        if (err) return res.status(500).json({ error: err.code });
+        return res.status(200).send("Successful update");
+      }
+    );
+  } else if (req.body.declineRequest) {
+    Ride.findOneAndUpdate(
+      { _id: req.params.id },
+      { $pull: { requested: req.body.id } },
+      (err, data) => {
+        if (err) return res.status(500).json({ error: err.code });
+        return res.status(200).send("Successful update");
+      }
+    );
+  }
 });
 
 module.exports = router;

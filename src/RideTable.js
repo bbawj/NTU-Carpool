@@ -11,7 +11,6 @@ import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 
@@ -54,11 +53,15 @@ function RideTable({ rows }) {
   function RidePopup({ info }) {
     async function handleSendRequest() {
       try {
-        await axios.patch(`/ride/${info.id}`, null, {
-          headers: {
-            authorization: localStorage.getItem("token"),
-          },
-        });
+        await axios.patch(
+          `/ride/${info.id}`,
+          { sendRequest: true },
+          {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          }
+        );
         handleClose();
       } catch (err) {
         console.error(err);
