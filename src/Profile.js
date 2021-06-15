@@ -204,7 +204,6 @@ function Profile() {
             authorization: localStorage.getItem("token"),
           },
         });
-        console.log(res);
         setActiveCreatedRides(
           res.data.filter(
             (ride) => ride.pickupTime > now && ride.ownerId === currentUser
@@ -253,7 +252,6 @@ function Profile() {
     if (reason === "clickaway") {
       return;
     }
-
     setError(false);
   };
   return (
@@ -328,7 +326,6 @@ function Profile() {
             {ride.requested.length !== 0 && <AnnouncementIcon />}
           </div>
         ))}
-
         <Passenger
           joined={activeJoinedRides}
           requested={activeRequestedRides}

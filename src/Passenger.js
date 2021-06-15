@@ -8,6 +8,7 @@ import PassengerPopup from "./PassengerPopup";
 
 function Passenger({ joined, requested }) {
   const [value, setValue] = useState(0);
+  const [info, setInfo] = useState();
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -17,12 +18,13 @@ function Passenger({ joined, requested }) {
     setValue(newValue);
   };
 
-  function handleOpen() {
+  function handleOpen(id) {
+    setInfo(id);
     setOpen(true);
   }
   return (
     <div>
-      <PassengerPopup open={open} handleClose={handleClose} />
+      <PassengerPopup open={open} handleClose={handleClose} info={info} />
       <Tabs
         className="passengerTabs"
         indicatorColor="primary"
@@ -37,7 +39,7 @@ function Passenger({ joined, requested }) {
 
       <div value={value} hidden={value !== 0}>
         {joined &&
-          joined.map((ride, idx) => (
+          joined.map((ride) => (
             <div className="myRideContainer" key={ride._id}>
               <div className="myRide">
                 <h4>
@@ -60,12 +62,8 @@ function Passenger({ joined, requested }) {
       </div>
       <div value={value} hidden={value !== 1}>
         {requested &&
-          requested.map((ride, idx) => (
-            <div
-              className="myRideContainer"
-              key={ride._id}
-              onClick={handleOpen}
-            >
+          requested.map((ride) => (
+            <div className="myPassengerContainer" key={ride._id}>
               <div className="myRide">
                 <h4>
                   {new Date(ride.pickupTime).toLocaleString("en-SG", {
@@ -82,6 +80,7 @@ function Passenger({ joined, requested }) {
                   />
                 </Tooltip>
               ))}
+              <button onClick={() => handleOpen(ride._id)}>CANCEL</button>
             </div>
           ))}
       </div>

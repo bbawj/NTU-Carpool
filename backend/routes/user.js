@@ -64,19 +64,20 @@ router.post("/add", verifyToken, async (req, res) => {
   }
 });
 // UPDATE ride/:id
-router.patch("/:id", verifyToken, (req, res) => {
+router.patch("/:id", verifyToken, async (req, res) => {
+  //get doc from db
+  const ride = await Ride.findOne({ _id: req.params.id });
+  if (!ride) return res.status(404).json({ err: "Ride not found" });
   if (req.body.sendRequest) {
-    Ride.findOneAndUpdate(
-      { _id: req.params.id },
-      { $addToSet: { requested: req.user._id } },
-      (err, data) => {
-        if (err) return res.status(500).json({ error: err.code });
-        return res.status(200).send("Successful update");
-      }
-    );
-  } else if (req.body.acceptRequest) {
-    Ride.findOneAndUpdate(
-      { _id: req.params.id },
+    ride.updateOne({ $addToSet: { requested: req.user._id } }, (err, data) => {
+      if (err) return res.status(500).json({ error: err.code });
+      return res.status(200).send("Successful update");
+    });
+  } else if (
+    req.body.acceptRequest &&
+    ride.ownerId.toString() === req.user._id
+  ) {
+    ride.updateOne(
       {
         $addToSet: { riders: req.body.id },
         $pull: { requested: req.body.id },
@@ -86,15 +87,19 @@ router.patch("/:id", verifyToken, (req, res) => {
         return res.status(200).send("Successful update");
       }
     );
-  } else if (req.body.declineRequest) {
-    Ride.findOneAndUpdate(
-      { _id: req.params.id },
-      { $pull: { requested: req.body.id } },
-      (err, data) => {
-        if (err) return res.status(500).json({ error: err.code });
-        return res.status(200).send("Successful update");
-      }
-    );
+  } else if (
+    req.body.declineRequest &&
+    ride.ownerId.toString() === req.user._id
+  ) {
+    ride.updateOne({ $pull: { requested: req.body.id } }, (err, data) => {
+      if (err) return res.status(500).json({ error: err.code });
+      return res.status(200).send("Successful update");
+    });
+  } else if (req.body.cancelRequest) {
+    ride.updateOne({ $pull: { requested: req.user._id } }, (err, data) => {
+      if (err) return res.status(500).json({ error: err.code });
+      return res.status(200).send("Successful update");
+    });
   }
 });
 

@@ -49,6 +49,25 @@
   border-radius: 5px;
   cursor: pointer;
 }
+.myPassengerContainer {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 1em;
+  margin-top: 0.5em;
+  border-radius: 5px;
+}
+
+.myPassengerContainer > button {
+  border: none;
+  border-radius: 5px;
+  background-color: white;
+  padding: 0.5em;
+  cursor: pointer;
+}
+.myPassengerContainer > button:hover {
+  background-color: pink;
+}
 
 .myRide {
   display: flex;
