@@ -7,7 +7,7 @@ const verifyToken = require("../middleware/verifyToken");
 
 //validate with joi
 const schema = Joi.object({
-  ownerId: Joi.string().required(),
+  ownerId: Joi.required(),
   pickup: Joi.string(),
   dropoff: Joi.string(),
   pickupTime: Joi.date().min("now").format("YYYY-MM-DD HH:mm").required(),

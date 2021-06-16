@@ -58,6 +58,7 @@ function Passenger({ joined, requested }) {
               {ride.riders.map((rider) => (
                 <Tooltip key={rider._id} title={rider.username} placement="top">
                   <Avatar
+                    alt={rider.username}
                     src={`http://localhost:5000/image/${rider.profileImageName}`}
                   />
                 </Tooltip>
@@ -86,6 +87,7 @@ function Passenger({ joined, requested }) {
               {ride.riders.map((rider) => (
                 <Tooltip key={rider._id} title={rider.username} placement="top">
                   <Avatar
+                    alt={rider.username}
                     src={`http://localhost:5000/image/${rider.profileImageName}`}
                   />
                 </Tooltip>

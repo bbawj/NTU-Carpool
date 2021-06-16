@@ -186,9 +186,11 @@ function Profile() {
           }
         );
         setPhoto(`image/${res.data.file.filename}`);
-        await axios.delete(`image/${oldId.data.prevId}`, {
-          headers: { authorization: localStorage.getItem("token") },
-        });
+        if (oldId.data.prevId) {
+          await axios.delete(`image/${oldId.data.prevId}`, {
+            headers: { authorization: localStorage.getItem("token") },
+          });
+        }
       }
     } catch (err) {
       setError(true);
@@ -256,7 +258,12 @@ function Profile() {
   };
   return (
     <div className="profile">
-      <Snackbar open={error} autoHideDuration={6000} onClose={handleErrorClose}>
+      <Snackbar
+        open={error}
+        autoHideDuration={6000}
+        onClose={handleErrorClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
         <p>Failed to update profile picture.</p>
       </Snackbar>
       <ProfilePopup info={info} />
@@ -296,7 +303,7 @@ function Profile() {
         </div>
         {activeCreatedRides.length === 0 && (
           <p className="placeholderContent">
-            You have no created active rides.
+            You have not created any new rides.
           </p>
         )}
         {activeCreatedRides.map((ride, idx) => (
@@ -324,6 +331,7 @@ function Profile() {
             {ride.riders.map((rider) => (
               <Tooltip key={rider._id} title={rider.username} placement="top">
                 <Avatar
+                  alt={rider.username}
                   src={`http://localhost:5000/image/${rider.profileImageName}`}
                 />
               </Tooltip>
@@ -349,6 +357,7 @@ function Profile() {
             {ride.riders.map((rider) => (
               <Tooltip key={rider._id} title={rider.username} placement="top">
                 <Avatar
+                  alt={rider.username}
                   key={rider._id}
                   src={`http://localhost:5000/image/${rider.profileImageName}`}
                 />

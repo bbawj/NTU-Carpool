@@ -156,14 +156,17 @@ function RideTable({ rows }) {
                   minute: "2-digit",
                 })}
               </TableCell>
-              <TableCell>{row.price}</TableCell>
+              <TableCell>${row.price}</TableCell>
               <TableCell>
-                {row.riders.map((rider) => (
-                  <Avatar
-                    key={rider._id}
-                    src={`http://localhost:5000/image/${rider.profileImageName}`}
-                  />
-                ))}
+                <div style={{ display: "flex" }}>
+                  {row.riders.map((rider) => (
+                    <Avatar
+                      alt={rider.username}
+                      key={rider._id}
+                      src={`http://localhost:5000/image/${rider.profileImageName}`}
+                    />
+                  ))}
+                </div>
               </TableCell>
             </TableRow>
           ))}
