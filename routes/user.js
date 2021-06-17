@@ -10,7 +10,7 @@ const schema = Joi.object({
   ownerId: Joi.required(),
   pickup: Joi.string(),
   dropoff: Joi.string(),
-  pickupTime: Joi.date().min("now").format("YYYY-MM-DD HH:mm").required(),
+  pickupTime: Joi.date().min("now").required(),
   seats: Joi.number().min(1).max(6).required(),
   price: Joi.number().min(0).required(),
 });

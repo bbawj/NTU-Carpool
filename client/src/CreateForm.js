@@ -25,7 +25,6 @@ function CreateForm({ pickup, dropoff }) {
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
     setPickupTime("");
@@ -42,10 +41,11 @@ function CreateForm({ pickup, dropoff }) {
         ownerId: currentUser,
         pickup: pickup,
         dropoff: dropoff,
-        pickupTime: `${date} ${pickupTime}`,
+        pickupTime: new Date(`${date} ${pickupTime}`).toISOString(),
         seats: seats,
         price: price,
       };
+
       const res = await axios.post("/ride/add", payload, {
         headers: { authorization: localStorage.getItem("token") },
       });
