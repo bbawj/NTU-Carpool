@@ -59,7 +59,7 @@ function Passenger({ joined, requested }) {
                 <Tooltip key={rider._id} title={rider.username} placement="top">
                   <Avatar
                     alt={rider.username}
-                    src={`http://localhost:5000/image/${rider.profileImageName}`}
+                    src={`/image/${rider.profileImageName}`}
                   />
                 </Tooltip>
               ))}
@@ -88,7 +88,7 @@ function Passenger({ joined, requested }) {
                 <Tooltip key={rider._id} title={rider.username} placement="top">
                   <Avatar
                     alt={rider.username}
-                    src={`http://localhost:5000/image/${rider.profileImageName}`}
+                    src={`/image/${rider.profileImageName}`}
                   />
                 </Tooltip>
               ))}

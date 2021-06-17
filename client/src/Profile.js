@@ -270,11 +270,7 @@ function Profile() {
       <div className="profileHeader">
         <h1>My Rides</h1>
         <Tooltip title="Change profile picture" placement="bottom">
-          <Avatar
-            onClick={handleEditPicture}
-            src={`http://localhost:5000/${photo}`}
-            alt=""
-          />
+          <Avatar onClick={handleEditPicture} src={`/${photo}`} alt="" />
         </Tooltip>
         <form encType="multipart/form-data" style={{ display: "none" }}>
           <input
@@ -332,7 +328,7 @@ function Profile() {
               <Tooltip key={rider._id} title={rider.username} placement="top">
                 <Avatar
                   alt={rider.username}
-                  src={`http://localhost:5000/image/${rider.profileImageName}`}
+                  src={`/image/${rider.profileImageName}`}
                 />
               </Tooltip>
             ))}
@@ -359,7 +355,7 @@ function Profile() {
                 <Avatar
                   alt={rider.username}
                   key={rider._id}
-                  src={`http://localhost:5000/image/${rider.profileImageName}`}
+                  src={`/image/${rider.profileImageName}`}
                 />
               </Tooltip>
             ))}

@@ -142,7 +142,7 @@ function RideTable({ rows }) {
               <TableCell component="th" scope="row">
                 <Avatar
                   alt={row.ownerId.username}
-                  src={`http://localhost:5000/image/${row.ownerId.profileImageName}`}
+                  src={`/image/${row.ownerId.profileImageName}`}
                 />
               </TableCell>
               <TableCell>{row.pickup}</TableCell>
@@ -163,7 +163,7 @@ function RideTable({ rows }) {
                     <Avatar
                       alt={rider.username}
                       key={rider._id}
-                      src={`http://localhost:5000/image/${rider.profileImageName}`}
+                      src={`/image/${rider.profileImageName}`}
                     />
                   ))}
                 </div>
