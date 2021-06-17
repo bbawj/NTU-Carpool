@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const multer = require("multer");
 const GridFsStorage = require("multer-gridfs-storage");
-const Grid = require("gridfs-stream");
 const path = require("path");
 const crypto = require("crypto");
 
@@ -71,6 +70,7 @@ const userRoute = require("./routes/user");
 //use auth route
 app.use("/user", authRoute);
 app.use("/ride", userRoute);
+
 //use auth middleware
 const verifyToken = require("./middleware/verifyToken");
 
@@ -110,5 +110,15 @@ app.delete("/image/:imageId", verifyToken, (req, res) => {
     if (err) return res.status(404).json({ err: err });
   });
 });
+
+// Serve static assets if in production
+if (process.env.NODE_ENV === "production") {
+  // Set static folder
+  app.use(express.static("client/build"));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+}
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
