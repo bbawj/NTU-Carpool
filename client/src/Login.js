@@ -2,11 +2,13 @@ import React, { useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import "./Login.css";
 import axios from "./axios";
+import { useAuth } from "./contexts/AuthContext";
 
 function Login() {
   const usernameRef = useRef();
   const passwordRef = useRef();
   const history = useHistory();
+  const { setCurrentUser } = useAuth();
   const [error, setError] = useState("");
 
   async function handleSubmit(e) {
@@ -18,6 +20,7 @@ function Login() {
         password: passwordRef.current.value,
       });
       localStorage.setItem("token", "Bearer " + res.data.accessToken);
+      setCurrentUser(true);
       history.push("/home");
     } catch (err) {
       setError("Failed to login");
