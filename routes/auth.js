@@ -53,7 +53,7 @@ router.post("/login", async (req, res) => {
     { _id: user.id },
     process.env.ACCESS_TOKEN_SECRET
   );
-  res.json({ accessToken: accessToken });
+  res.json({ accessToken: accessToken, userId: user.id });
 });
 
 router.get("/isauth", verifyToken, (req, res) => {

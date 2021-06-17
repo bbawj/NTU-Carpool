@@ -20,7 +20,7 @@ function Login() {
         password: passwordRef.current.value,
       });
       localStorage.setItem("token", "Bearer " + res.data.accessToken);
-      setCurrentUser(true);
+      setCurrentUser(res.data.userId);
       history.push("/home");
     } catch (err) {
       setError("Failed to login");
